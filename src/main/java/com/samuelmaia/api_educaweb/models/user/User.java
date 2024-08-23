@@ -23,4 +23,10 @@ public class User {
     private String email;
 
     private String password;
+
+    public User(UserRequestPost data){
+        this.email = data.email();
+        this.login = data.login();
+        this.password = data.password();
+    }
 }
