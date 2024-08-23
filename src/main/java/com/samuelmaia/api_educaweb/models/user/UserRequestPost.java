@@ -5,5 +5,6 @@ import org.antlr.v4.runtime.misc.NotNull;
 public record UserRequestPost(
         @NotNull String login,
         @NotNull String email,
-        @NotNull String password
+        @NotNull String password,
+        @NotNull String type
 ) { }

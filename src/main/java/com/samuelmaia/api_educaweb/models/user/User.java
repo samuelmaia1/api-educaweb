@@ -22,11 +22,15 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @Column(unique = true)
+    private String type;
+
     private String password;
 
     public User(UserRequestPost data){
         this.email = data.email();
         this.login = data.login();
         this.password = data.password();
+        this.type = data.type();
     }
 }
