@@ -49,4 +49,12 @@ public class Student {
             inverseJoinColumns = @JoinColumn(name = "vacancy_id")
     )
     private List<Vacancy> vacancies = new ArrayList<>();
+
+    public Student(StudentRequestPost data){
+        this.email = data.email();
+        this.firstName = data.first_name();
+        this.lastName = data.last_name();
+        this.login = data.login();
+        this.password = data.password();
+    }
 }
