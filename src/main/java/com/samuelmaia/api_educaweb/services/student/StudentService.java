@@ -67,4 +67,16 @@ public class StudentService {
             System.out.println(e.getMessage());
         }
     }
+
+    public StudentRequestGet generateStudentGetDTO(Student student){
+        StudentRequestGet studentDTO = new StudentRequestGet(student.getId(),
+                student.getFirstName(),
+                student.getLastName(),
+                student.getLogin(),
+                student.getEmail(),
+                student.getCourses(),
+                student.getVacancies()
+        );
+        return studentDTO;
+    }
 }

@@ -3,9 +3,11 @@ package com.samuelmaia.api_educaweb.controllers;
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.student.Student;
 import com.samuelmaia.api_educaweb.models.student.StudentRepository;
+import com.samuelmaia.api_educaweb.models.student.StudentRequestGet;
 import com.samuelmaia.api_educaweb.models.student.StudentRequestPost;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.services.student.StudentService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,24 @@ public class StudentController {
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents(){
         return ResponseEntity.ok(studentRepository.findAll());
+    }
+
+    @GetMapping("/{studentId}")
+    public ResponseEntity<StudentRequestGet> getStudent(@PathVariable String studentId){
+        System.out.println(studentId);
+        try{
+            Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado."));
+            StudentRequestGet studentRequestGet = studentService.generateStudentGetDTO(student);
+            return ResponseEntity.ok(studentRequestGet);
+        }
+        catch (EntityNotFoundException e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @PostMapping("/register")
