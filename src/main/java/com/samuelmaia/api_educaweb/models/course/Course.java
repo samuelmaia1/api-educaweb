@@ -18,4 +18,9 @@ public class Course {
     private String name;
 
     private String category;
+
+    public Course(CourseRequestPost data){
+        this.name = data.name();
+        this.category = data.category();
+    }
 }
