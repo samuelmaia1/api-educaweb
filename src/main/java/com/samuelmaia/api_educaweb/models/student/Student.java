@@ -1,9 +1,11 @@
 package com.samuelmaia.api_educaweb.models.student;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
+import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "students")
@@ -32,5 +34,19 @@ public class Student {
     @Column(name = "last_name")
     private String lastName;
 
-    private List<Course> courses;
+    @ManyToMany
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private List<Course> courses = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "student_vacancy",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "vacancy_id")
+    )
+    private List<Vacancy> vacancies = new ArrayList<>();
 }
