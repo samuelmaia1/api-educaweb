@@ -16,4 +16,8 @@ public class Vacancy {
 
     @Column(unique = true)
     private String title;
+
+    public Vacancy(VacancyRequestPost data){
+        this.title = data.title();
+    }
 }

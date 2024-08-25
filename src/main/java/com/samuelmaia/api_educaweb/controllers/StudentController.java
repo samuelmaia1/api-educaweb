@@ -1,18 +1,20 @@
 package com.samuelmaia.api_educaweb.controllers;
 
+import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.student.Student;
 import com.samuelmaia.api_educaweb.models.student.StudentRepository;
 import com.samuelmaia.api_educaweb.models.student.StudentRequestPost;
+import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.services.student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/student")
@@ -25,6 +27,11 @@ public class StudentController {
 
     @Autowired
     private PasswordEncoder encoder;
+
+    @GetMapping
+    public ResponseEntity<List<Student>> getAllStudents(){
+        return ResponseEntity.ok(studentRepository.findAll());
+    }
 
     @PostMapping("/register")
     public ResponseEntity<Student> registerStudent(@RequestBody @Validated StudentRequestPost data){
@@ -40,5 +47,26 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/{studentId}/courses")
+    public ResponseEntity<List<Course>> getAllFinishedCourses(@PathVariable String studentId){
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.getFinishedCourses(studentId));
+    }
+
+    @PostMapping("/{studentId}/courses/{courseId}")
+    public ResponseEntity<Student> addFinishedCourse(@PathVariable String studentId, @PathVariable String courseId){
+        studentService.addFinishedCourse(studentId, courseId);
+        return ResponseEntity.ok(studentRepository.getReferenceById(studentId));
+    }
+
+    @GetMapping("/{studentId}/vacancies")
+    public ResponseEntity<List<Vacancy>> getAllVacancies(@PathVariable String studentId){
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.getAllVacancies(studentId));
+    }
+
+    @PostMapping("/{studentId}/vacancies/{vacancyId}")
+    public ResponseEntity<Student> addVacancy(@PathVariable String studentId, @PathVariable String vacancyId){
+        studentService.addVacancy(studentId, vacancyId);
+        return ResponseEntity.ok(studentRepository.getReferenceById(studentId));
+    }
 
 }
