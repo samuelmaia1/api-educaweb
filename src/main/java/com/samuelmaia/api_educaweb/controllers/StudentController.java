@@ -7,6 +7,9 @@ import com.samuelmaia.api_educaweb.models.student.StudentRequestGet;
 import com.samuelmaia.api_educaweb.models.student.StudentRequestPost;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.services.student.StudentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/student")
 public class StudentController {
@@ -30,11 +34,20 @@ public class StudentController {
     @Autowired
     private PasswordEncoder encoder;
 
+    @Operation(summary = "Consula por estudantes",description = "Realiza uma consulta pelos estudantes do sistema, retornando uma lista com todos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Todos os estudantes são retornados."),
+    })
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents(){
-        return ResponseEntity.ok(studentRepository.findAll());
+        return ResponseEntity.ok().body(studentRepository.findAll());
     }
 
+    @Operation(summary = "Consulta por id",description = "Realiza uma consulta por um estudante específico pelo id.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna o estudante com o id passado como parâmetro pela url"),
+            @ApiResponse(responseCode = "404", description = "Retorna null caso não seja encontrado nenhum estudante com o id")
+    })
     @GetMapping("/{studentId}")
     public ResponseEntity<StudentRequestGet> getStudent(@PathVariable String studentId){
         System.out.println(studentId);
@@ -53,6 +66,11 @@ public class StudentController {
         }
     }
 
+    @Operation(summary = "Novo estudante", description = "Recebe os dados de um estudante pelo body da requisição e cria um novo registro no banco de dados.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estudante foi criado e é retornado o objeto que foi adicionado ao banco"),
+            @ApiResponse(responseCode = "500", description = "Caso ocorra algum erro interno, é retornado o objeto null e o status 500")
+    })
     @PostMapping("/register")
     public ResponseEntity<Student> registerStudent(@RequestBody @Validated StudentRequestPost data){
         try{
@@ -67,6 +85,11 @@ public class StudentController {
         }
     }
 
+    @Operation(summary = "Cursos finalizados", description = "Retorna uma lista de cursos finalizados do estudante com id passado pela url")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna todos os cursos do estudante"),
+            @ApiResponse(responseCode = "404", description = "É retornado null, caso o estudante não seja encontrado")
+    })
     @GetMapping("/{studentId}/courses")
     public ResponseEntity<List<Course>> getAllFinishedCourses(@PathVariable String studentId){
         return ResponseEntity.status(HttpStatus.OK).body(studentService.getFinishedCourses(studentId));
