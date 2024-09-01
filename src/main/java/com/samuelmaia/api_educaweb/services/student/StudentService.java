@@ -7,6 +7,7 @@ import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.models.vacancy.VacancyRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public class StudentService {
     private CourseRepository courseRepository;
     @Autowired
     private VacancyRepository vacancyRepository;
+    @Autowired
+    PasswordEncoder encoder;
 
     public List<Course> getFinishedCourses(String studentId){
         try{
@@ -78,5 +81,19 @@ public class StudentService {
                 student.getVacancies()
         );
         return studentDTO;
+    }
+
+    public Student updateStudent(String id, StudentRequestPut data){
+        Student student = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
+
+        if (data.email() != null) student.setEmail(data.email());
+        if (data.firstName() != null) student.setFirstName(data.firstName());
+        if (data.lastName() != null) student.setLastName(data.lastName());
+        if (data.password() != null) {
+            student.setPassword(encoder.encode(data.password()));
+        }
+        if (data.login() != null) student.setLogin(data.login());
+
+        return student;
     }
 }

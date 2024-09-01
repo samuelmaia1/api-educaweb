@@ -1,13 +1,12 @@
 package com.samuelmaia.api_educaweb.controllers;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
-import com.samuelmaia.api_educaweb.models.student.Student;
-import com.samuelmaia.api_educaweb.models.student.StudentRepository;
-import com.samuelmaia.api_educaweb.models.student.StudentRequestGet;
-import com.samuelmaia.api_educaweb.models.student.StudentRequestPost;
+import com.samuelmaia.api_educaweb.models.error_response.ErrorResponse;
+import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.services.student.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
@@ -111,5 +110,22 @@ public class StudentController {
         studentService.addVacancy(studentId, vacancyId);
         return ResponseEntity.ok(studentRepository.getReferenceById(studentId));
     }
+
+    @PutMapping("/update/{studentId}")
+    public ResponseEntity<?> updateStudent(@Parameter(description = "id do usuário a ser atualizado") @PathVariable String studentId, @RequestBody @Validated StudentRequestPut data){
+        try{
+            Student updatedStudent = studentService.updateStudent(studentId, data);
+            studentRepository.save(updatedStudent);
+            return ResponseEntity.ok().body(updatedStudent);
+        }
+        catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno"  ));
+        }
+    }
+
+    
 
 }
