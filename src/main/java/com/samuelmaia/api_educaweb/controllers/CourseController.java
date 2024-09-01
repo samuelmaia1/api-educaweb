@@ -2,7 +2,7 @@ package com.samuelmaia.api_educaweb.controllers;
 
 
 import com.samuelmaia.api_educaweb.models.course.Course;
-import com.samuelmaia.api_educaweb.models.course.CourseRepository;
+import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

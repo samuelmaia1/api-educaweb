@@ -20,12 +20,13 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String login;
 
+    @Column(nullable = false)
     private String password;
 
     @Column(name = "first_name")

@@ -19,12 +19,15 @@ public class Instructor {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(nullable = false)
     private String name;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
-
+    @OneToMany(mappedBy = "instructor")
+    private List<Course> courses = new ArrayList<>();
 }

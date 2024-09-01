@@ -4,6 +4,7 @@ import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.error_response.ErrorResponse;
 import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
+import com.samuelmaia.api_educaweb.repositories.StudentRepository;
 import com.samuelmaia.api_educaweb.services.student.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,7 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -94,11 +94,13 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.OK).body(studentService.getFinishedCourses(studentId));
     }
 
+    @Operation(summary = "Novo curso finalizado", description = "Adiciona um novo curso à lista de cursos finalizados deste estudante")
     @PostMapping("/{studentId}/courses/{courseId}")
     public ResponseEntity<Student> addFinishedCourse(@PathVariable String studentId, @PathVariable String courseId){
         studentService.addFinishedCourse(studentId, courseId);
         return ResponseEntity.ok(studentRepository.getReferenceById(studentId));
     }
+
 
     @GetMapping("/{studentId}/vacancies")
     public ResponseEntity<List<Vacancy>> getAllVacancies(@PathVariable String studentId){
@@ -116,7 +118,7 @@ public class StudentController {
         try{
             Student updatedStudent = studentService.updateStudent(studentId, data);
             studentRepository.save(updatedStudent);
-            return ResponseEntity.ok().body(updatedStudent);
+            return ResponseEntity.ok(updatedStudent);
         }
         catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
@@ -126,6 +128,6 @@ public class StudentController {
         }
     }
 
-    
+
 
 }

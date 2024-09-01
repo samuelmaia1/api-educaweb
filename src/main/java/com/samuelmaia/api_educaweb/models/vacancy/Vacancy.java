@@ -1,7 +1,11 @@
 package com.samuelmaia.api_educaweb.models.vacancy;
 
+import com.samuelmaia.api_educaweb.models.student.Student;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "vacancies")
 @Entity(name = "vacancies")
@@ -14,8 +18,20 @@ public class Vacancy {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String title;
+
+    @Column
+    private String arrangement;
+
+    @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
+    private Double salary;
+
+    @ManyToMany(mappedBy = "vacancies")
+    private List<Student> students = new ArrayList<>();
 
     public Vacancy(VacancyRequestPost data){
         this.title = data.title();
