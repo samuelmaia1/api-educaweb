@@ -41,5 +41,15 @@ public class Course {
     public Course(CourseRequestPost data){
         this.name = data.name();
         this.category = data.category();
+        this.description = data.description();
+        this.url = data.url();
+    }
+
+    public Course(CourseRequestPost data, Instructor instructor){
+        this.name = data.name();
+        this.category = data.category();
+        this.description = data.description();
+        this.url = data.url();
+        this.instructor = instructor;
     }
 }

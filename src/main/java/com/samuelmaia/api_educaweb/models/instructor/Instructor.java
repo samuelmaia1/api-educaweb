@@ -30,4 +30,10 @@ public class Instructor {
 
     @OneToMany(mappedBy = "instructor")
     private List<Course> courses = new ArrayList<>();
+
+    public Instructor(InstructorPostDTO data){
+        this.name = data.name();
+        this.email = data.email();
+        this.password = data.password();
+    }
 }

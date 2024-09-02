@@ -1,8 +1,10 @@
 package com.samuelmaia.api_educaweb.models.course;
 
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public record CourseRequestPost(
         @NotNull String name,
-        @NotNull String category
+        @NotNull String category,
+        @NotNull String description,
+        @NotNull String url
 ) { }
