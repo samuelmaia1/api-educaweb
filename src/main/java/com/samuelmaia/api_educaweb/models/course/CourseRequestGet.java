@@ -1,9 +1,23 @@
 package com.samuelmaia.api_educaweb.models.course;
 
-public record CourseRequestGet(
-        String id,
-        String name,
-        String category,
-        String description,
-        String url
-) { }
+import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTO;
+import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTOByCourse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@AllArgsConstructor
+@Getter
+@Setter
+public class CourseRequestGet {
+    private String id;
+    private String name;
+    private String category;
+    private String description;
+    private String url;
+    private InstructorGetDTOByCourse instructorGetDTO;
+
+    public CourseRequestGet(String id, String name, String category, String description, String url){
+
+    }
+}

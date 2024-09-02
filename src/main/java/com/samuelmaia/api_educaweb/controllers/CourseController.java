@@ -2,10 +2,12 @@ package com.samuelmaia.api_educaweb.controllers;
 
 
 import com.samuelmaia.api_educaweb.models.course.Course;
+import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.instructor.Instructor;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
+import com.samuelmaia.api_educaweb.services.course.CourseService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,12 +17,16 @@ import org.springframework.validation.annotation.Validated;
 import com.samuelmaia.api_educaweb.models.error_response.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/course")
 public class CourseController {
+    @Autowired
+    CourseService courseService;
+
     @Autowired
     CourseRepository courseRepository;
     @Autowired
@@ -38,5 +44,11 @@ public class CourseController {
             System.out.print(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CourseRequestGet>> getAllCourses(){
+        List<Course> courses = courseRepository.findAll();
+        return ResponseEntity.status(HttpStatus.OK).body(courses.stream().map(course -> courseService.generateGetDTOWithInstructor(course)).toList());
     }
 }

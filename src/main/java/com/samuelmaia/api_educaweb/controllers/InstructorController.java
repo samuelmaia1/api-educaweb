@@ -1,14 +1,11 @@
 package com.samuelmaia.api_educaweb.controllers;
 
-import com.samuelmaia.api_educaweb.models.course.Course;
-import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
 import com.samuelmaia.api_educaweb.models.error_response.ErrorResponse;
-import com.samuelmaia.api_educaweb.models.instructor.Instructor;
-import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTO;
-import com.samuelmaia.api_educaweb.models.instructor.InstructorPostDTO;
+import com.samuelmaia.api_educaweb.models.instructor.*;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
+import com.samuelmaia.api_educaweb.services.course.CourseService;
 import com.samuelmaia.api_educaweb.services.instructor.InstructorService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/instructor")
@@ -35,6 +30,8 @@ public class InstructorController {
 
     @Autowired
     InstructorService instructorService;
+    @Autowired
+    CourseService courseService;
 
     @GetMapping
     public ResponseEntity<List<InstructorGetDTO>> getAllInstructors(){
@@ -42,16 +39,23 @@ public class InstructorController {
             List<Instructor> allInstructors = instructorRepository.findAll();
             List<InstructorGetDTO> allInstructorsDTO = allInstructors.stream()
                     .map(
-                        instructor -> new InstructorGetDTO(
-                        instructor.getId(),
-                        instructor.getName(),
-                        instructor.getEmail(),
-                        instructor.getCourses().stream().map(course -> new CourseRequestGet(course.getId(), course.getName(), course.getCategory(), course.getDescription(), course.getUrl())).toList()))
+                        instructor -> instructorService.generateGetDTO(instructor))
                     .toList();
             return ResponseEntity.ok(allInstructorsDTO);
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/{instructorId}")
+    public ResponseEntity<?> getInstructorById(@PathVariable String instructorId){
+        try{
+            Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado"));
+            return ResponseEntity.status(HttpStatus.OK).body(instructorService.generateGetDTO(instructor));
+        }
+        catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         }
     }
 
@@ -72,16 +76,19 @@ public class InstructorController {
     public ResponseEntity<?> addNewCourse(@RequestBody @Validated CourseRequestPost data, @PathVariable String instructorId){
         try{
             String courseId = instructorService.createCourse(instructorId, data);
-            Course course = courseRepository.getReferenceById(courseId);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(new CourseRequestGet(
-                    course.getId(),
-                    course.getName(),
-                    course.getCategory(),
-                    course.getDescription(),
-                    course.getUrl())
-            );
+                    .body(courseService.generateGetDTO(courseRepository.getReferenceById(courseId)));
+        }
+        catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{instructorId}/course")
+    public ResponseEntity<?> getInstructorCourses(@PathVariable String instructorId){
+        try{
+            return ResponseEntity.status(HttpStatus.OK).body(instructorService.getCourses(instructorId));
         }
         catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
