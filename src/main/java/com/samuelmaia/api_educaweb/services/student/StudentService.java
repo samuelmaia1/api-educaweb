@@ -4,7 +4,7 @@ import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
-import com.samuelmaia.api_educaweb.models.vacancy.VacancyRepository;
+import com.samuelmaia.api_educaweb.repositories.VacancyRepository;
 import com.samuelmaia.api_educaweb.repositories.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

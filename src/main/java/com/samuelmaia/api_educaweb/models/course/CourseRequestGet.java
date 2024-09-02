@@ -15,7 +15,7 @@ public class CourseRequestGet {
     private String category;
     private String description;
     private String url;
-    private InstructorGetDTOByCourse instructorGetDTO;
+    private InstructorGetDTOByCourse instructor;
 
     public CourseRequestGet(String id, String name, String category, String description, String url){
 

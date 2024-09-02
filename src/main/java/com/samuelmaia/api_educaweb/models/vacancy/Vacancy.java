@@ -1,5 +1,6 @@
 package com.samuelmaia.api_educaweb.models.vacancy;
 
+import com.samuelmaia.api_educaweb.models.company.Company;
 import com.samuelmaia.api_educaweb.models.student.Student;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,6 +33,10 @@ public class Vacancy {
 
     @ManyToMany(mappedBy = "vacancies")
     private List<Student> students = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
     public Vacancy(VacancyRequestPost data){
         this.title = data.title();

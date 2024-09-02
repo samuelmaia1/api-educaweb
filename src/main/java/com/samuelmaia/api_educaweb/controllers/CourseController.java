@@ -47,8 +47,20 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CourseRequestGet>> getAllCourses(){
-        List<Course> courses = courseRepository.findAll();
+    public ResponseEntity<List<CourseRequestGet>> getAllCourses(@RequestParam(required = false) String category, @RequestParam(required = false) String name){
+        List<Course> courses = courseService.findCourses(category, name);
         return ResponseEntity.status(HttpStatus.OK).body(courses.stream().map(course -> courseService.generateGetDTOWithInstructor(course)).toList());
+    }
+
+
+    @GetMapping("/{courseId}")
+    public ResponseEntity<?> getCourseById(@PathVariable String  courseId){
+        try{
+            Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Curso não existente com este id"));
+            return ResponseEntity.status(HttpStatus.OK).body(courseService.generateGetDTOWithInstructor(course));
+        }
+        catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
     }
 }

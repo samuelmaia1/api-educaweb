@@ -1,7 +1,7 @@
 package com.samuelmaia.api_educaweb.controllers;
 
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
-import com.samuelmaia.api_educaweb.models.vacancy.VacancyRepository;
+import com.samuelmaia.api_educaweb.repositories.VacancyRepository;
 import com.samuelmaia.api_educaweb.models.vacancy.VacancyRequestPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
