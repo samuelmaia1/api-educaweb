@@ -41,4 +41,12 @@ public class Vacancy {
     public Vacancy(VacancyRequestPost data){
         this.title = data.title();
     }
+
+    public Vacancy(VacancyRequestPost data, Company company){
+        this.title = data.title();
+        this.arrangement = data.arrangement();
+        this.description = data.description();
+        this.salary = data.salary();
+        this.company = company;
+    }
 }
