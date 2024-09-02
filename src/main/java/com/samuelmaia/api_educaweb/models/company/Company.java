@@ -41,4 +41,14 @@ public class Company {
 
     @OneToMany(mappedBy = "company")
     List<Vacancy> vacancies = new ArrayList<>();
+
+    public Company(CompanyPostDTO data){
+        this.name = data.getName();
+        this.email = data.getEmail();
+        this.address = data.getAddress();
+        this.country = data.getCountry();
+        this.city = data.getCity();
+        this.state = data.getState();
+        this.password = data.getPassword();
+    }
 }
