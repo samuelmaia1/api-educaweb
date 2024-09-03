@@ -28,6 +28,7 @@ public class InstructorService {
     public String createCourse(String instructorId, CourseRequestPost data){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado"));
         Course course = new Course(data, instructor);
+        System.out.println(course);
         instructor.getCourses().add(course);
         courseRepository.save(course);
         instructorRepository.save(instructor);

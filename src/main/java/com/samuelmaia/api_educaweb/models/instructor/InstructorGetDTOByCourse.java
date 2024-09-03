@@ -1,8 +1,10 @@
 package com.samuelmaia.api_educaweb.models.instructor;
 
-public record InstructorGetDTOByCourse(
-        String id,
-        String name,
-        String email
-) {
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public class InstructorGetDTOByCourse {
+    private String id;
+    private String name;
+    private String email;
 }

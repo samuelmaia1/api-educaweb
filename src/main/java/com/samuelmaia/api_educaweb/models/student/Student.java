@@ -53,8 +53,8 @@ public class Student {
 
     public Student(StudentRequestPost data){
         this.email = data.email();
-        this.firstName = data.first_name();
-        this.lastName = data.last_name();
+        this.firstName = data.firstName();
+        this.lastName = data.lastName();
         this.login = data.login();
         this.password = data.password();
     }

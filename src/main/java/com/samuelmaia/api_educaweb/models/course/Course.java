@@ -19,7 +19,7 @@ public class Course {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Column(nullable = false)
@@ -51,5 +51,10 @@ public class Course {
         this.description = data.description();
         this.url = data.url();
         this.instructor = instructor;
+    }
+
+    @Override
+    public String toString(){
+        return this.name + " " + this.category + " " + this.description + " " + this.url;
     }
 }
