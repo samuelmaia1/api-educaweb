@@ -12,6 +12,6 @@ public class VacancyService {
     CompanyService companyService;
 
     public VacancyRequestGet generateGetDTO(Vacancy vacancy){
-        return new VacancyRequestGet(vacancy.getTitle(), vacancy.getArrangement(), vacancy.getDescription(), vacancy.getSalary(), companyService.generateGetDTO(vacancy.getCompany()));
+        return new VacancyRequestGet(vacancy.getTitle(), vacancy.getArrangement(), vacancy.getDescription(), vacancy.getSalary());
     }
 }

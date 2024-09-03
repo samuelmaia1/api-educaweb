@@ -13,5 +13,4 @@ public class VacancyRequestGet {
     private String arrangement;
     private String description;
     private Double salary;
-    CompanyGetDTO company;
 }
