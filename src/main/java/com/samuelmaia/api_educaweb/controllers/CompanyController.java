@@ -72,4 +72,6 @@ public class CompanyController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         }
     }
+
+
 }
