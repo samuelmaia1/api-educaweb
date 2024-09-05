@@ -54,12 +54,12 @@ public class CompanyController {
         }
     }
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<Company> registerCompany(@RequestBody @Validated CompanyPostDTO data){
         Company company = new Company(data);
         company.setPassword(encoder.encode(company.getPassword()));
         companyRepository.save(company);
-        return ResponseEntity.status(HttpStatus.OK).body(company);
+        return ResponseEntity.status(HttpStatus.CREATED).body(company);
     }
 
     @PostMapping("/{companyId}/vacancy")

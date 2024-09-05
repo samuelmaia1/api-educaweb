@@ -11,7 +11,6 @@ public class CompanyPostDTO {
     private String name;
     private String email;
     private String password;
-    private String country;
     private String state;
     private String city;
     private String address;

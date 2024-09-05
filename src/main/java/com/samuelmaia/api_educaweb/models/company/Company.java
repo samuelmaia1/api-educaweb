@@ -28,9 +28,6 @@ public class Company {
     private String password;
 
     @Column
-    private String country;
-
-    @Column
     private String state;
 
     @Column
@@ -46,7 +43,6 @@ public class Company {
         this.name = data.getName();
         this.email = data.getEmail();
         this.address = data.getAddress();
-        this.country = data.getCountry();
         this.city = data.getCity();
         this.state = data.getState();
         this.password = data.getPassword();

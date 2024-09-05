@@ -30,6 +30,6 @@ public class CompanyService {
     }
 
     public CompanyGetDTO generateGetDTO(Company company){
-        return new CompanyGetDTO(company.getId(), company.getName(), company.getEmail(), company.getCountry(), company.getState(), company.getCity(), company.getAddress(), company.getVacancies());
+        return new CompanyGetDTO(company.getId(), company.getName(), company.getEmail(), company.getState(), company.getCity(), company.getAddress(), company.getVacancies());
     }
 }
