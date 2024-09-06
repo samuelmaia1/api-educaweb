@@ -1,4 +1,4 @@
-package com.samuelmaia.api_educaweb.models.error_response;
+package com.samuelmaia.api_educaweb.models.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

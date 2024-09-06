@@ -6,12 +6,16 @@ import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.repositories.VacancyRepository;
 import com.samuelmaia.api_educaweb.repositories.StudentRepository;
+import com.samuelmaia.api_educaweb.services.course.CourseService;
+import com.samuelmaia.api_educaweb.services.vacancy.VacancyService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -20,7 +24,11 @@ public class StudentService {
     @Autowired
     private CourseRepository courseRepository;
     @Autowired
+    private CourseService courseService;
+    @Autowired
     private VacancyRepository vacancyRepository;
+    @Autowired
+    private VacancyService vacancyService;
     @Autowired
     PasswordEncoder encoder;
 
@@ -95,5 +103,27 @@ public class StudentService {
         if (data.login() != null) student.setLogin(data.login());
 
         return student;
+    }
+
+    public Boolean login(String login, String password){
+        Student student = studentRepository.findByLogin(login);
+        if (student != null){
+            return encoder.matches(password,student.getPassword());
+        }
+        throw new UsernameNotFoundException("Usuário " + login + " não encontrado.");
+    }
+
+    public void deleteStudent(String id){
+        Student student = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Estudante com este id não encontrado."));
+
+        for (Vacancy vacancy : student.getVacancies()){
+            vacancyService.removeCandidate(vacancy, student);
+        }
+
+        for (Course course : student.getCourses()){
+            courseService.removeStudent(course, student);
+        }
+
+        studentRepository.delete(student);
     }
 }

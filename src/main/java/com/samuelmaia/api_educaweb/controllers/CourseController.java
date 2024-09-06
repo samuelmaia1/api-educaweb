@@ -11,14 +11,12 @@ import com.samuelmaia.api_educaweb.services.course.CourseService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import com.samuelmaia.api_educaweb.models.error_response.ErrorResponse;
+import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController

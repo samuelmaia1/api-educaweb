@@ -1,6 +1,6 @@
 package com.samuelmaia.api_educaweb.controllers;
 
-import com.samuelmaia.api_educaweb.models.error_response.ErrorResponse;
+import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
 import com.samuelmaia.api_educaweb.services.external_services.CepService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

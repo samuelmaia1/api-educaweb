@@ -1,9 +1,7 @@
 package com.samuelmaia.api_educaweb.controllers;
 
-import com.samuelmaia.api_educaweb.models.course.Course;
-import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
-import com.samuelmaia.api_educaweb.models.error_response.ErrorResponse;
+import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
 import com.samuelmaia.api_educaweb.models.instructor.*;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;

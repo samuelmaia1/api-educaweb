@@ -1,7 +1,8 @@
 package com.samuelmaia.api_educaweb.controllers;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
-import com.samuelmaia.api_educaweb.models.error_response.ErrorResponse;
+import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
+import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.repositories.StudentRepository;
@@ -14,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +42,28 @@ public class StudentController {
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents(){
         return ResponseEntity.ok().body(studentRepository.findAll());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody @Validated LoginDTO loginData){
+        try{
+            if (studentService.login(loginData.login(), loginData.password())) return ResponseEntity.status(HttpStatus.OK).body(new LoginResponse(true, "Login validado."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválida."));
+        }
+        catch (UsernameNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{studentId}")
+    public ResponseEntity<?> deleteStudent(@PathVariable String studentId){
+        try{
+            studentService.deleteStudent(studentId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
     }
 
     @Operation(summary = "Consulta por id",description = "Realiza uma consulta por um estudante específico pelo id.")
@@ -127,7 +151,5 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno"  ));
         }
     }
-
-
 
 }
