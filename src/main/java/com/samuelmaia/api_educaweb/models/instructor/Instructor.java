@@ -28,7 +28,10 @@ public class Instructor {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "instructor")
+    @Column(name = "login", unique = true)
+    private String login;
+
+    @OneToMany(mappedBy = "instructor", orphanRemoval = true)
     private List<Course> courses = new ArrayList<>();
 
     public Instructor(InstructorPostDTO data){

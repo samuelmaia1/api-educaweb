@@ -1,8 +1,10 @@
 package com.samuelmaia.api_educaweb.controllers;
 
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
+import com.samuelmaia.api_educaweb.models.response.DeleteResponse;
 import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
 import com.samuelmaia.api_educaweb.models.instructor.*;
+import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
 import com.samuelmaia.api_educaweb.services.course.CourseService;
@@ -74,10 +76,14 @@ public class InstructorController {
         }
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginDTO loginData){
+        return instructorService.login(loginData.email(), loginData.password());
+    }
+
     @PostMapping("/{instructorId}/course")
     public ResponseEntity<?> addNewCourse(@RequestBody @Validated CourseRequestPost data, @PathVariable String instructorId){
         try{
-            //String courseId = instructorService.createCourse(instructorId, data);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(courseService.generateGetDTO(courseRepository.getReferenceById(instructorService.createCourse(instructorId, data))));
@@ -98,5 +104,10 @@ public class InstructorController {
         catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         }
+    }
+
+    @DeleteMapping("/{instructorId}/course/{courseId}")
+    public ResponseEntity<DeleteResponse> deleteCourse(@PathVariable String instructorId, @PathVariable String courseId){
+        return instructorService.deleteCourse(courseId, instructorId);
     }
 }

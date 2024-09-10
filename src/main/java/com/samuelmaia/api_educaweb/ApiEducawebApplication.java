@@ -13,10 +13,4 @@ public class ApiEducawebApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ApiEducawebApplication.class, args);
 	}
-
-	@Bean
-	public PasswordEncoder getPasswordEncoder(){
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		return encoder;
-	}
 }
