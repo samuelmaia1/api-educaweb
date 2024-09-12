@@ -29,9 +29,11 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/student/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/student/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/student").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/index.html#").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -6,6 +6,7 @@ import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.repositories.StudentRepository;
+import com.samuelmaia.api_educaweb.services.TokenService;
 import com.samuelmaia.api_educaweb.services.student.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,6 +36,9 @@ public class StudentController {
     @Autowired
     private PasswordEncoder encoder;
 
+    @Autowired
+    private TokenService tokenService;
+
     @Operation(summary = "Consula por estudantes",description = "Realiza uma consulta pelos estudantes do sistema, retornando uma lista com todos.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Todos os estudantes são retornados."),
@@ -47,8 +51,12 @@ public class StudentController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginDTO loginData){
         try{
-            if (studentService.login(loginData.login(), loginData.password())) return ResponseEntity.status(HttpStatus.OK).body(new LoginResponse(true, "Login validado."));
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválida."));
+            if (studentService.login(loginData.login(), loginData.password())){
+                var token = tokenService.generateStudentToken(studentRepository.findByLogin(loginData.login()));
+                return ResponseEntity.ok(new LoginResponse(true, "Login efetuado com sucesso.", token));
+            }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválida.", ""));
         }
         catch (UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));

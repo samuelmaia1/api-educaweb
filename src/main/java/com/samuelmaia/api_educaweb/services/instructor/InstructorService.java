@@ -60,12 +60,12 @@ public class InstructorService {
         try{
             Instructor instructor = instructorRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Instrutor com este e-mail não existe."));
             if (encoder.matches(password, instructor.getPassword())){
-                return ResponseEntity.ok(new LoginResponse(true, "Login efetuado com sucesso."));
+                return ResponseEntity.ok(new LoginResponse(true, "Login efetuado com sucesso.", ""));
             }
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha incorreta."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha incorreta.", ""));
         }
         catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Email inexistente"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Email inexistente", ""));
         }
     }
 

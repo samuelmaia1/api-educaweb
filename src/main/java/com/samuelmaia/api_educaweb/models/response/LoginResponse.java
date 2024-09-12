@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record LoginResponse(
         @NotNull Boolean ok,
-        @NotNull String message
+        @NotNull String message,
+        String token
 ) {
 }

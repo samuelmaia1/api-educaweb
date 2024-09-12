@@ -36,6 +36,9 @@ public class Company {
     @Column
     private String address;
 
+    @Column(unique = true)
+    private String login;
+
     @OneToMany(mappedBy = "company")
     List<Vacancy> vacancies = new ArrayList<>();
 
