@@ -1,6 +1,7 @@
 package com.samuelmaia.api_educaweb.services.student;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
+import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
@@ -32,28 +33,16 @@ public class StudentService {
     @Autowired
     PasswordEncoder encoder;
 
-    public List<Course> getFinishedCourses(String studentId){
-        try{
-            Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
-            return student.getCourses();
-        }
-        catch(Exception e){
-            System.out.println(e.getMessage());
-            return null;
-        }
+    public List<CourseRequestGet> getFinishedCourses(String studentId){
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
+        return student.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList();
     }
 
     public void addFinishedCourse(String studentId, String courseId){
-        try{
-            Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
-            Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
-            student.getCourses().add(course);
-            studentRepository.save(student);
-        }
-        catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
+        student.getCourses().add(course);
+        studentRepository.save(student);
     }
 
     public List<Vacancy> getAllVacancies(String studentId){
@@ -85,7 +74,7 @@ public class StudentService {
                 student.getLastName(),
                 student.getLogin(),
                 student.getEmail(),
-                student.getCourses(),
+                student.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList(),
                 student.getVacancies()
         );
         return studentDTO;
@@ -125,5 +114,12 @@ public class StudentService {
         }
 
         studentRepository.delete(student);
+    }
+
+    public Student register(StudentRequestPost data){
+        Student student = new Student(data);
+        student.setPassword(encoder.encode(student.getPassword()));
+        studentRepository.save(student);
+        return student;
     }
 }

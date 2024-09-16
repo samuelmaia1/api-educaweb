@@ -36,7 +36,7 @@ public class CourseController {
             Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado."));
             Course course = new Course(data, instructor);
             courseRepository.save(course);
-            return ResponseEntity.status(HttpStatus.CREATED).body(course);
+            return ResponseEntity.status(HttpStatus.CREATED).body(courseService.generateGetDTO(course));
         }
         catch (EntityNotFoundException e){
             System.out.print(e.getMessage());

@@ -1,6 +1,7 @@
 package com.samuelmaia.api_educaweb.controllers;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
+import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
 import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.models.student.*;
@@ -105,13 +106,9 @@ public class StudentController {
     @PostMapping("/register")
     public ResponseEntity<Student> registerStudent(@RequestBody @Validated StudentRequestPost data){
         try{
-            Student student = new Student(data);
-            student.setPassword(encoder.encode(student.getPassword()));
-            studentRepository.save(student);
-            return ResponseEntity.status(HttpStatus.CREATED).body(student);
+            return ResponseEntity.status(HttpStatus.CREATED).body(studentService.register(data));
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -122,15 +119,24 @@ public class StudentController {
             @ApiResponse(responseCode = "404", description = "É retornado null, caso o estudante não seja encontrado")
     })
     @GetMapping("/{studentId}/courses")
-    public ResponseEntity<List<Course>> getAllFinishedCourses(@PathVariable String studentId){
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.getFinishedCourses(studentId));
+    public ResponseEntity<?> getAllFinishedCourses(@PathVariable String studentId){
+        try{
+            List<CourseRequestGet> courseList = studentService.getFinishedCourses(studentId);
+            return ResponseEntity.status(HttpStatus.OK).body(courseList);
+        } catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
     }
 
     @Operation(summary = "Novo curso finalizado", description = "Adiciona um novo curso à lista de cursos finalizados deste estudante")
     @PostMapping("/{studentId}/courses/{courseId}")
-    public ResponseEntity<Student> addFinishedCourse(@PathVariable String studentId, @PathVariable String courseId){
-        studentService.addFinishedCourse(studentId, courseId);
-        return ResponseEntity.ok(studentRepository.getReferenceById(studentId));
+    public ResponseEntity<?> addFinishedCourse(@PathVariable String studentId, @PathVariable String courseId){
+        try{
+            studentService.addFinishedCourse(studentId, courseId);
+            return ResponseEntity.ok(studentService.generateStudentGetDTO(studentRepository.getReferenceById(studentId)));
+        } catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
     }
 
 
