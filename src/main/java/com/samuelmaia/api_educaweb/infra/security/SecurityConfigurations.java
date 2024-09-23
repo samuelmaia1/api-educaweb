@@ -35,6 +35,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/student/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/student/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/services/cep/{cep}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
