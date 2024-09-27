@@ -56,17 +56,15 @@ public class InstructorService {
         return instructor.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList();
     }
 
-    public ResponseEntity<LoginResponse> login(String email, String password){
-        try{
-            Instructor instructor = instructorRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Instrutor com este e-mail não existe."));
-            if (encoder.matches(password, instructor.getPassword())){
-                return ResponseEntity.ok(new LoginResponse(true, "Login efetuado com sucesso.", ""));
-            }
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha incorreta.", ""));
+    public Boolean login(String login, String password){
+        Instructor instructor = instructorRepository.findByLogin(login);
+
+        if (instructor == null) throw new EntityNotFoundException("Instrutor com este login não existe");
+
+        if (encoder.matches(password, instructor.getPassword())){
+            return true;
         }
-        catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Email inexistente", ""));
-        }
+        return false;
     }
 
     public ResponseEntity<DeleteResponse> deleteCourse(String courseId, String instructorId){

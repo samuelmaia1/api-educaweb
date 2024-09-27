@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface InstructorRepository extends JpaRepository<Instructor, String> {
     Optional<Instructor> findByEmail(String email);
 
-    UserDetails findByLogin(String login);
+    Instructor findByLogin(String login);
 }

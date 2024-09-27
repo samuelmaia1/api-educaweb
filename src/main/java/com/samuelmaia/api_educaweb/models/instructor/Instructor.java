@@ -46,6 +46,7 @@ public class Instructor implements UserDetails {
         this.name = data.name();
         this.email = data.email();
         this.password = data.password();
+        this.login = data.login();
     }
 
     @Override

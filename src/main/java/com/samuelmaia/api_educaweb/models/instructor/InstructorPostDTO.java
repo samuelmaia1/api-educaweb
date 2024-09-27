@@ -5,5 +5,6 @@ import jakarta.validation.constraints.NotNull;
 public record InstructorPostDTO(
     @NotNull String name,
     @NotNull String email,
-    @NotNull String password
+    @NotNull String password,
+    @NotNull String login
 ) { }

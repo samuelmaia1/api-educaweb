@@ -1,12 +1,15 @@
 package com.samuelmaia.api_educaweb.controllers;
 
+import com.samuelmaia.api_educaweb.components.SecurityFilter;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
+import com.samuelmaia.api_educaweb.models.response.AuthorizationResponse;
 import com.samuelmaia.api_educaweb.models.response.DeleteResponse;
 import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
 import com.samuelmaia.api_educaweb.models.instructor.*;
 import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
+import com.samuelmaia.api_educaweb.services.TokenService;
 import com.samuelmaia.api_educaweb.services.course.CourseService;
 import com.samuelmaia.api_educaweb.services.instructor.InstructorService;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +40,9 @@ public class InstructorController {
     InstructorService instructorService;
     @Autowired
     CourseService courseService;
+    @Autowired
+    TokenService tokenService;
+
 
     @GetMapping
     public ResponseEntity<List<InstructorGetDTO>> getAllInstructors(){
@@ -77,8 +84,20 @@ public class InstructorController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Validated LoginDTO loginData){
-        return instructorService.login(loginData.email(), loginData.password());
+    public ResponseEntity<?> login(@RequestBody @Validated LoginDTO loginData){
+        System.out.println(loginData);
+        try{
+            if (instructorService.login(loginData.login(), loginData.password())){
+                Instructor instructor = instructorRepository.findByLogin(loginData.login());
+                var token = tokenService.generateInstructorToken(instructorRepository.findByLogin(loginData.login()));
+                return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), instructor.getRole().toString()));
+            }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválida.", ""));
+        }
+        catch (UsernameNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+        }
     }
 
     @PostMapping("/{instructorId}/course")

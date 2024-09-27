@@ -2,6 +2,7 @@ package com.samuelmaia.api_educaweb.controllers;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
+import com.samuelmaia.api_educaweb.models.response.AuthorizationResponse;
 import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
 import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.models.student.*;
@@ -49,8 +50,9 @@ public class StudentController {
     public ResponseEntity<?> login(@RequestBody @Validated LoginDTO loginData){
         try{
             if (studentService.login(loginData.login(), loginData.password())){
+                Student student = studentRepository.findByLogin(loginData.login());
                 var token = tokenService.generateStudentToken(studentRepository.findByLogin(loginData.login()));
-                return ResponseEntity.ok(new LoginResponse(true, "Login efetuado com sucesso.", token));
+                return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), student.getRole().toString()));
             }
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválida.", ""));
