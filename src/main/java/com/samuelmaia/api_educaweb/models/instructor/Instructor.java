@@ -55,7 +55,7 @@ public class Instructor implements UserDetails {
 
     @Override
     public String getUsername() {
-        return "";
+        return this.login;
     }
 
     @Override
