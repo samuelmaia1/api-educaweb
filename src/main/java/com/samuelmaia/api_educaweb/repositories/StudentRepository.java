@@ -7,4 +7,7 @@ import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, String> {
     Student findByLogin(String login);
+    Boolean existsByLogin(String login);
+    Boolean existsByEmail(String email);
+
 }

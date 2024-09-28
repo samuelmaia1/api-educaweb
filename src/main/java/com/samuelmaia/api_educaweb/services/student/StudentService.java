@@ -11,6 +11,7 @@ import com.samuelmaia.api_educaweb.services.course.CourseService;
 import com.samuelmaia.api_educaweb.services.vacancy.VacancyService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -117,6 +118,13 @@ public class StudentService {
     }
 
     public Student register(StudentRequestPost data){
+        if (studentRepository.existsByLogin(data.login())){
+            throw new DataIntegrityViolationException("Login existente.");
+        }
+
+        if (studentRepository.existsByEmail(data.email())){
+            throw new DataIntegrityViolationException("Email já cadastrado.");
+        }
         Student student = new Student(data);
         student.setPassword(encoder.encode(student.getPassword()));
         studentRepository.save(student);

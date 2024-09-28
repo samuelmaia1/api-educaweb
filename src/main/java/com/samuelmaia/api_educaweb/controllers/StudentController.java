@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -55,10 +56,10 @@ public class StudentController {
                 return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), student.getRole().toString()));
             }
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválida.", ""));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválidos.", ""));
         }
         catch (UsernameNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado."));
         }
     }
 
@@ -92,12 +93,12 @@ public class StudentController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Student> registerStudent(@RequestBody @Validated StudentRequestPost data){
+    public ResponseEntity<?> registerStudent(@RequestBody @Validated StudentRequestPost data){
         try{
             return ResponseEntity.status(HttpStatus.CREATED).body(studentService.register(data));
         }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        catch (DataIntegrityViolationException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
         }
     }
 
