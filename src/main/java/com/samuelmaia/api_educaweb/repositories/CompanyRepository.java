@@ -6,4 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface CompanyRepository extends JpaRepository<Company, String> {
     UserDetails findByLogin(String login);
+
+    Boolean existsByLogin(String login);
+
+    Boolean existsByEmail(String email);
 }

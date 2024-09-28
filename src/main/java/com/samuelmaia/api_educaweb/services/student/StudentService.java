@@ -2,11 +2,9 @@ package com.samuelmaia.api_educaweb.services.student;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
-import com.samuelmaia.api_educaweb.repositories.CourseRepository;
+import com.samuelmaia.api_educaweb.repositories.*;
 import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
-import com.samuelmaia.api_educaweb.repositories.VacancyRepository;
-import com.samuelmaia.api_educaweb.repositories.StudentRepository;
 import com.samuelmaia.api_educaweb.services.course.CourseService;
 import com.samuelmaia.api_educaweb.services.vacancy.VacancyService;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,6 +29,10 @@ public class StudentService {
     private VacancyRepository vacancyRepository;
     @Autowired
     private VacancyService vacancyService;
+    @Autowired
+    private InstructorRepository instructorRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
     @Autowired
     PasswordEncoder encoder;
 
@@ -118,11 +120,11 @@ public class StudentService {
     }
 
     public Student register(StudentRequestPost data){
-        if (studentRepository.existsByLogin(data.login())){
+        if (studentRepository.existsByLogin(data.login()) || instructorRepository.existsByLogin(data.login()) || companyRepository.existsByLogin(data.login())){
             throw new DataIntegrityViolationException("Login existente.");
         }
 
-        if (studentRepository.existsByEmail(data.email())){
+        if (studentRepository.existsByEmail(data.email()) || instructorRepository.existsByEmail(data.email()) || companyRepository.existsByEmail(data.email())){
             throw new DataIntegrityViolationException("Email já cadastrado.");
         }
         Student student = new Student(data);

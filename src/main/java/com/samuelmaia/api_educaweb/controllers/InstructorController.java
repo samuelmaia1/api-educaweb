@@ -73,13 +73,13 @@ public class InstructorController {
     @PostMapping("/register")
     public ResponseEntity<?> registerNewInstructor(@RequestBody @Validated InstructorPostDTO data){
         try{
-            Instructor instructor = new Instructor(data);
-            instructor.setPassword(encoder.encode(instructor.getPassword()));
-            instructorRepository.save(instructor);
-            return ResponseEntity.status(HttpStatus.CREATED).body(instructorService.generateGetDTO(instructor));
+            return ResponseEntity.status(HttpStatus.CREATED).body(instructorService.register(data));
+        }
+        catch (DataIntegrityViolationException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro ao criar conta, por favor tente mais tarde."));
         }
     }
 

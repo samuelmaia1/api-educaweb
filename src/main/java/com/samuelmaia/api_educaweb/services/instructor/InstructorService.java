@@ -5,13 +5,17 @@ import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
 import com.samuelmaia.api_educaweb.models.instructor.Instructor;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTO;
+import com.samuelmaia.api_educaweb.models.instructor.InstructorPostDTO;
 import com.samuelmaia.api_educaweb.models.response.DeleteResponse;
 import com.samuelmaia.api_educaweb.models.response.LoginResponse;
+import com.samuelmaia.api_educaweb.repositories.CompanyRepository;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
+import com.samuelmaia.api_educaweb.repositories.StudentRepository;
 import com.samuelmaia.api_educaweb.services.course.CourseService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +27,12 @@ import java.util.List;
 public class InstructorService {
     @Autowired
     InstructorRepository instructorRepository;
+
+    @Autowired
+    StudentRepository studentRepository;
+
+    @Autowired
+    CompanyRepository companyRepository;
 
     @Autowired
     CourseRepository courseRepository;
@@ -54,6 +64,21 @@ public class InstructorService {
     public List<CourseRequestGet> getCourses(String instructorId){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado"));
         return instructor.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList();
+    }
+
+    public Instructor register(InstructorPostDTO data){
+        if (instructorRepository.existsByLogin(data.login()) ||studentRepository.existsByLogin(data.login()) || companyRepository.existsByLogin(data.login())){
+            throw new DataIntegrityViolationException("Nome de usuário já cadastrado.");
+        }
+        if (instructorRepository.existsByEmail(data.email()) || studentRepository.existsByEmail(data.email()) || companyRepository.existsByEmail(data.email())){
+            throw new DataIntegrityViolationException("Email já cadastrado.");
+        }
+
+        Instructor instructor = new Instructor(data);
+        instructor.setPassword(encoder.encode(instructor.getPassword()));
+        instructorRepository.save(instructor);
+
+        return instructor;
     }
 
     public Boolean login(String login, String password){

@@ -10,4 +10,8 @@ public interface InstructorRepository extends JpaRepository<Instructor, String> 
     Optional<Instructor> findByEmail(String email);
 
     Instructor findByLogin(String login);
+
+    Boolean existsByEmail(String email);
+
+    Boolean existsByLogin(String login);
 }
