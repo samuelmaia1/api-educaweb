@@ -85,12 +85,11 @@ public class InstructorController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginDTO loginData){
-        System.out.println(loginData);
         try{
             if (instructorService.login(loginData.login(), loginData.password())){
                 Instructor instructor = instructorRepository.findByLogin(loginData.login());
                 var token = tokenService.generateInstructorToken(instructorRepository.findByLogin(loginData.login()));
-                return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), instructor.getRole().toString()));
+                return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), instructor.getRole().toString(), instructor.getId()));
             }
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválida.", ""));

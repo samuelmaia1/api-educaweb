@@ -1,8 +1,12 @@
 package com.samuelmaia.api_educaweb.controllers;
 
 import com.samuelmaia.api_educaweb.components.SecurityFilter;
+import com.samuelmaia.api_educaweb.models.company.Company;
+import com.samuelmaia.api_educaweb.models.instructor.Instructor;
 import com.samuelmaia.api_educaweb.models.response.AuthorizationResponse;
 import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
+import com.samuelmaia.api_educaweb.models.response.ValidationResponse;
+import com.samuelmaia.api_educaweb.models.student.Student;
 import com.samuelmaia.api_educaweb.repositories.CompanyRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
 import com.samuelmaia.api_educaweb.repositories.StudentRepository;
@@ -42,6 +46,10 @@ public class AuthController {
 
         String token = securityFilter.recoverToken(request);
 
+        Instructor instructor;
+        Student student;
+        Company company;
+
         if (token != null){
             if (tokenService.validateToken(token).isEmpty()){
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(401, "Login expirado."));
@@ -63,7 +71,7 @@ public class AuthController {
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            return ResponseEntity.ok(new AuthorizationResponse(token, user.getUsername(), user
+            return ResponseEntity.ok(new ValidationResponse(token, user.getUsername(), user
                     .getAuthorities()
                     .stream()
                     .findFirst()

@@ -53,7 +53,7 @@ public class StudentController {
             if (studentService.login(loginData.login(), loginData.password())){
                 Student student = studentRepository.findByLogin(loginData.login());
                 var token = tokenService.generateStudentToken(studentRepository.findByLogin(loginData.login()));
-                return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), student.getRole().toString()));
+                return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), student.getRole().toString(), student.getId()));
             }
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválidos.", ""));
