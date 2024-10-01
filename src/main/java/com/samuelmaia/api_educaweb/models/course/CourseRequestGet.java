@@ -1,5 +1,6 @@
 package com.samuelmaia.api_educaweb.models.course;
 
+import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTO;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTOByCourse;
 import com.samuelmaia.api_educaweb.services.instructor.InstructorService;
 import lombok.AllArgsConstructor;
@@ -16,5 +17,5 @@ public class CourseRequestGet {
     private String category;
     private String description;
     private String url;
-
+    private InstructorGetDTOByCourse instructor;
 }

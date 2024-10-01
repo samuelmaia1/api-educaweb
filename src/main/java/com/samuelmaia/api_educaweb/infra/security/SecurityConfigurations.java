@@ -38,11 +38,11 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/student/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/company/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/instructor/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/course/register/{instructorId}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/course/register/{instructorId}").hasRole("INSTRUCTOR")
                         .requestMatchers(HttpMethod.GET, "/api/services/cep/{cep}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/validatetoken").permitAll()
                         .anyRequest().authenticated()
-                )
+                )   
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
