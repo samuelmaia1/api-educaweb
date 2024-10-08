@@ -49,47 +49,25 @@ public class StudentController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginDTO loginData){
-        try{
-            if (studentService.login(loginData.login(), loginData.password())){
-                Student student = studentRepository.findByLogin(loginData.login());
-                var token = tokenService.generateStudentToken(studentRepository.findByLogin(loginData.login()));
-                return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), student.getRole().toString(), student.getId()));
-            }
+        if (studentService.login(loginData.login(), loginData.password())){
+            Student student = studentRepository.findByLogin(loginData.login());
+            var token = tokenService.generateStudentToken(studentRepository.findByLogin(loginData.login()));
+            return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), student.getRole().toString(), student.getId()));
+        }
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválidos.", ""));
-        }
-        catch (UsernameNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado."));
-        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválidos.", ""));
     }
 
     @DeleteMapping("/{studentId}")
     public ResponseEntity<?> deleteStudent(@PathVariable String studentId){
-        try{
-            studentService.deleteStudent(studentId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
+        studentService.deleteStudent(studentId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/{studentId}")
     public ResponseEntity<StudentRequestGet> getStudent(@PathVariable String studentId){
-        System.out.println(studentId);
-        try{
-            Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado."));
-            StudentRequestGet studentRequestGet = studentService.generateStudentGetDTO(student);
-            return ResponseEntity.ok(studentRequestGet);
-        }
-        catch (EntityNotFoundException e){
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        StudentRequestGet student = studentService.getStudent(studentId);
+        return ResponseEntity.ok(student);
     }
 
     @PostMapping("/register")

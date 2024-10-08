@@ -1,5 +1,6 @@
 package com.samuelmaia.api_educaweb.services.student;
 
+import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.repositories.*;
@@ -10,6 +11,7 @@ import com.samuelmaia.api_educaweb.services.vacancy.VacancyService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -102,11 +104,11 @@ public class StudentService {
         if (student != null){
             return encoder.matches(password,student.getPassword());
         }
-        throw new UsernameNotFoundException("Usuário " + login + " não encontrado.");
+        throw new UserNameNotFoundException();
     }
 
     public void deleteStudent(String id){
-        Student student = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Estudante com este id não encontrado."));
+        Student student = studentRepository.findById(id).orElseThrow(() -> new UserNameNotFoundException("Estudante com este id não encontrado."));
 
         for (Vacancy vacancy : student.getVacancies()){
             vacancyService.removeCandidate(vacancy, student);
@@ -117,6 +119,11 @@ public class StudentService {
         }
 
         studentRepository.delete(student);
+    }
+
+    public StudentRequestGet getStudent(String id){
+        Student student = studentRepository.findById(id).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado."));
+        return this.generateStudentGetDTO(student);
     }
 
     public Student register(StudentRequestPost data){
