@@ -72,12 +72,7 @@ public class StudentController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerStudent(@RequestBody @Validated StudentRequestPost data){
-        try{
-            return ResponseEntity.status(HttpStatus.CREATED).body(studentService.register(data));
-        }
-        catch (DataIntegrityViolationException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(studentService.register(data));
     }
 
     @GetMapping("/{studentId}/courses")
