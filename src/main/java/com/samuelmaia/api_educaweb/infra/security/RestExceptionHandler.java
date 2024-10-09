@@ -13,7 +13,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserNameNotFoundException.class)
     private ResponseEntity<ErrorResponse> userNameNotFoundHandler(UserNameNotFoundException exception){
-        System.out.println(exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
     }
 }
