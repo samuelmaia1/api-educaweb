@@ -1,5 +1,6 @@
 package com.samuelmaia.api_educaweb.services.student;
 
+import com.samuelmaia.api_educaweb.exceptions.LoginAlreadyExistsException;
 import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
@@ -86,7 +87,7 @@ public class StudentService {
     }
 
     public Student updateStudent(String id, StudentRequestPut data){
-        Student student = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
+        Student student = studentRepository.findById(id).orElseThrow(UserNameNotFoundException::new);
 
         if (data.email() != null) student.setEmail(data.email());
         if (data.firstName() != null) student.setFirstName(data.firstName());
@@ -128,11 +129,11 @@ public class StudentService {
 
     public Student register(StudentRequestPost data){
         if (studentRepository.existsByLogin(data.login()) || instructorRepository.existsByLogin(data.login()) || companyRepository.existsByLogin(data.login())){
-            throw new DataIntegrityViolationException("Login existente.");
+            throw new LoginAlreadyExistsException();
         }
 
         if (studentRepository.existsByEmail(data.email()) || instructorRepository.existsByEmail(data.email()) || companyRepository.existsByEmail(data.email())){
-            throw new DataIntegrityViolationException("Email já cadastrado.");
+            throw new LoginAlreadyExistsException("E-mail já cadastrado.");
         }
         Student student = new Student(data);
         student.setPassword(encoder.encode(student.getPassword()));
