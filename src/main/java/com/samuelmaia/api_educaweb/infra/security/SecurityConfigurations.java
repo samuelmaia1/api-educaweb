@@ -41,7 +41,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/course/register/{instructorId}").hasRole("INSTRUCTOR")
                         .requestMatchers(HttpMethod.GET, "/api/services/cep/{cep}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/validatetoken").permitAll()
-                        .requestMatchers(HttpMethod.HEAD, "").permitAll()
+                        .requestMatchers(HttpMethod.HEAD, "/").permitAll()
                         .anyRequest().authenticated()
                 )   
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
