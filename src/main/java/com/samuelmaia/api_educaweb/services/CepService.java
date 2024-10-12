@@ -1,4 +1,4 @@
-package com.samuelmaia.api_educaweb.services.external_services;
+package com.samuelmaia.api_educaweb.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;

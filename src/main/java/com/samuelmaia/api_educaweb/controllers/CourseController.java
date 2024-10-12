@@ -7,7 +7,7 @@ import com.samuelmaia.api_educaweb.models.instructor.Instructor;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
-import com.samuelmaia.api_educaweb.services.course.CourseService;
+import com.samuelmaia.api_educaweb.services.CourseService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

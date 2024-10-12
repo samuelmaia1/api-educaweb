@@ -1,9 +1,8 @@
-package com.samuelmaia.api_educaweb.services.course;
+package com.samuelmaia.api_educaweb.services;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.instructor.Instructor;
-import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTO;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTOByCourse;
 import com.samuelmaia.api_educaweb.models.student.Student;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;

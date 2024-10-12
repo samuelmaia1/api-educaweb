@@ -1,4 +1,4 @@
-package com.samuelmaia.api_educaweb.services.instructor;
+package com.samuelmaia.api_educaweb.services;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
@@ -7,12 +7,10 @@ import com.samuelmaia.api_educaweb.models.instructor.Instructor;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTO;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorPostDTO;
 import com.samuelmaia.api_educaweb.models.response.DeleteResponse;
-import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.repositories.CompanyRepository;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
 import com.samuelmaia.api_educaweb.repositories.StudentRepository;
-import com.samuelmaia.api_educaweb.services.course.CourseService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

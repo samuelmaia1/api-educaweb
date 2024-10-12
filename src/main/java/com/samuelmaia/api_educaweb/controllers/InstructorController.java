@@ -1,6 +1,5 @@
 package com.samuelmaia.api_educaweb.controllers;
 
-import com.samuelmaia.api_educaweb.components.SecurityFilter;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
 import com.samuelmaia.api_educaweb.models.response.AuthorizationResponse;
 import com.samuelmaia.api_educaweb.models.response.DeleteResponse;
@@ -10,8 +9,8 @@ import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
 import com.samuelmaia.api_educaweb.services.TokenService;
-import com.samuelmaia.api_educaweb.services.course.CourseService;
-import com.samuelmaia.api_educaweb.services.instructor.InstructorService;
+import com.samuelmaia.api_educaweb.services.CourseService;
+import com.samuelmaia.api_educaweb.services.InstructorService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
