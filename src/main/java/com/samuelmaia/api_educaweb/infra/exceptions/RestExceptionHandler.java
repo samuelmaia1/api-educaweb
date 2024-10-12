@@ -1,4 +1,4 @@
-package com.samuelmaia.api_educaweb.infra.security;
+package com.samuelmaia.api_educaweb.infra.exceptions;
 
 import com.samuelmaia.api_educaweb.exceptions.LoginAlreadyExistsException;
 import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;

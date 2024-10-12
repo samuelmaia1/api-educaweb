@@ -34,12 +34,12 @@ public class StudentService {
     PasswordEncoder encoder;
 
     public List<CourseRequestGet> getFinishedCourses(String studentId){
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado"));
         return student.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList();
     }
 
     public void addFinishedCourse(String studentId, String courseId){
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
         student.getCourses().add(course);
         studentRepository.save(student);
@@ -58,7 +58,7 @@ public class StudentService {
 
     public void addVacancy(String studentId, String vacancyId){
         try{
-            Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
+            Student student = studentRepository.findById(studentId).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado"));
             Vacancy vacancy = vacancyRepository.findById(vacancyId).orElseThrow(() -> new EntityNotFoundException("Vaga não encontrada"));
             student.getVacancies().add(vacancy);
             studentRepository.save(student);
@@ -90,6 +90,8 @@ public class StudentService {
             student.setPassword(encoder.encode(data.password()));
         }
         if (data.login() != null) student.setLogin(data.login());
+
+        studentRepository.save(student);
 
         return student;
     }

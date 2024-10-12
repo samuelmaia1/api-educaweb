@@ -71,12 +71,7 @@ public class StudentController {
 
     @GetMapping("/{studentId}/courses")
     public ResponseEntity<?> getAllFinishedCourses(@PathVariable String studentId){
-        try{
-            List<CourseRequestGet> courseList = studentService.getFinishedCourses(studentId);
-            return ResponseEntity.status(HttpStatus.OK).body(courseList);
-        } catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.getFinishedCourses(studentId));
     }
     
     @PostMapping("/{studentId}/courses/{courseId}")
@@ -103,17 +98,7 @@ public class StudentController {
 
     @PutMapping("/update/{studentId}")
     public ResponseEntity<?> updateStudent(@Parameter(description = "id do usuário a ser atualizado") @PathVariable String studentId, @RequestBody @Validated StudentRequestPut data){
-        try{
-            Student updatedStudent = studentService.updateStudent(studentId, data);
-            studentRepository.save(updatedStudent);
-            return ResponseEntity.ok(updatedStudent);
-        }
-        catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno"  ));
-        }
+        return ResponseEntity.ok(studentService.updateStudent(studentId, data));
     }
 
 }
