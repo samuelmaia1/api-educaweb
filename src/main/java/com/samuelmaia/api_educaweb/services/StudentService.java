@@ -32,10 +32,12 @@ public class StudentService {
     private CompanyRepository companyRepository;
     @Autowired
     PasswordEncoder encoder;
+    @Autowired
+    DTOService dtoService;
 
     public List<CourseRequestGet> getFinishedCourses(String studentId){
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado"));
-        return student.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList();
+        return student.getCourses().stream().map(course -> dtoService.course(course)).toList();
     }
 
     public void addFinishedCourse(String studentId, String courseId){
@@ -66,18 +68,6 @@ public class StudentService {
         catch(Exception e){
             System.out.println(e.getMessage());
         }
-    }
-
-    public StudentRequestGet generateStudentGetDTO(Student student){
-        StudentRequestGet studentDTO = new StudentRequestGet(student.getId(),
-                student.getFirstName(),
-                student.getLastName(),
-                student.getLogin(),
-                student.getEmail(),
-                student.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList(),
-                student.getVacancies()
-        );
-        return studentDTO;
     }
 
     public Student updateStudent(String id, StudentRequestPut data){
@@ -120,7 +110,7 @@ public class StudentService {
 
     public StudentRequestGet getStudent(String id){
         Student student = studentRepository.findById(id).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado."));
-        return this.generateStudentGetDTO(student);
+        return dtoService.student(student);
     }
 
     public Student register(StudentRequestPost data){

@@ -29,6 +29,9 @@ public class InstructorService {
     InstructorRepository instructorRepository;
 
     @Autowired
+    DTOService dtoService;
+
+    @Autowired
     StudentRepository studentRepository;
 
     @Autowired
@@ -53,18 +56,10 @@ public class InstructorService {
         return course.getId();
     }
 
-    public InstructorGetDTO generateGetDTO(Instructor instructor){
-        return new InstructorGetDTO(
-                instructor.getId(),
-                instructor.getName(),
-                instructor.getEmail(),
-                instructor.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList()
-        );
-    }
 
     public List<CourseRequestGet> getCourses(String instructorId){
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new UserNameNotFoundException("Instrutor não encontrado"));
-        return instructor.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList();
+        return instructor.getCourses().stream().map(course -> dtoService.course(course)).toList();
     }
 
     public Instructor register(InstructorPostDTO data){

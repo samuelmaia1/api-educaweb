@@ -8,6 +8,7 @@ import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
 import com.samuelmaia.api_educaweb.services.CourseService;
+import com.samuelmaia.api_educaweb.services.DTOService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,9 @@ public class CourseController {
     CourseService courseService;
 
     @Autowired
+    DTOService dtoService;
+
+    @Autowired
     CourseRepository courseRepository;
     @Autowired
     InstructorRepository instructorRepository;
@@ -36,7 +40,7 @@ public class CourseController {
             Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado."));
             Course course = new Course(data, instructor);
             courseRepository.save(course);
-            return ResponseEntity.status(HttpStatus.CREATED).body(courseService.generateGetDTO(course));
+            return ResponseEntity.status(HttpStatus.CREATED).body(dtoService.course(course));
         }
         catch (EntityNotFoundException e){
             System.out.print(e.getMessage());
@@ -47,7 +51,7 @@ public class CourseController {
     @GetMapping
     public ResponseEntity<List<CourseRequestGet>> getAllCourses(@RequestParam(required = false) String category, @RequestParam(required = false) String name){
         List<Course> courses = courseService.findCourses(category, name);
-        return ResponseEntity.status(HttpStatus.OK).body(courses.stream().map(course -> courseService.generateGetDTOWithInstructor(course)).toList());
+        return ResponseEntity.status(HttpStatus.OK).body(courses.stream().map(course -> dtoService.course(course)).toList());
     }
 
 
@@ -55,7 +59,7 @@ public class CourseController {
     public ResponseEntity<?> getCourseById(@PathVariable String  courseId){
         try{
             Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Curso não existente com este id"));
-            return ResponseEntity.status(HttpStatus.OK).body(courseService.generateGetDTOWithInstructor(course));
+            return ResponseEntity.status(HttpStatus.OK).body(dtoService.course(course));
         }
         catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));

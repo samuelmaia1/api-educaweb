@@ -7,6 +7,7 @@ import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.repositories.StudentRepository;
+import com.samuelmaia.api_educaweb.services.DTOService;
 import com.samuelmaia.api_educaweb.services.TokenService;
 import com.samuelmaia.api_educaweb.services.StudentService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,6 +27,9 @@ import java.util.List;
 public class StudentController {
     @Autowired
     StudentService studentService;
+
+    @Autowired
+    DTOService dtoService;
 
     @Autowired
     StudentRepository studentRepository;
@@ -78,7 +82,7 @@ public class StudentController {
     public ResponseEntity<?> addFinishedCourse(@PathVariable String studentId, @PathVariable String courseId){
         try{
             studentService.addFinishedCourse(studentId, courseId);
-            return ResponseEntity.ok(studentService.generateStudentGetDTO(studentRepository.getReferenceById(studentId)));
+            return ResponseEntity.ok(dtoService.student(studentRepository.getReferenceById(studentId)));
         } catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         }

@@ -8,6 +8,7 @@ import com.samuelmaia.api_educaweb.models.instructor.*;
 import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
+import com.samuelmaia.api_educaweb.services.DTOService;
 import com.samuelmaia.api_educaweb.services.TokenService;
 import com.samuelmaia.api_educaweb.services.CourseService;
 import com.samuelmaia.api_educaweb.services.InstructorService;
@@ -31,6 +32,9 @@ public class InstructorController {
     PasswordEncoder encoder;
 
     @Autowired
+    DTOService dtoService;
+
+    @Autowired
     InstructorRepository instructorRepository;
     @Autowired
     CourseRepository courseRepository;
@@ -49,7 +53,7 @@ public class InstructorController {
             List<Instructor> allInstructors = instructorRepository.findAll();
             List<InstructorGetDTO> allInstructorsDTO = allInstructors.stream()
                     .map(
-                        instructor -> instructorService.generateGetDTO(instructor))
+                        instructor -> dtoService.instructor(instructor, true))
                     .toList();
             return ResponseEntity.ok(allInstructorsDTO);
         }
@@ -62,7 +66,7 @@ public class InstructorController {
     public ResponseEntity<?> getInstructorById(@PathVariable String instructorId){
         try{
             Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado"));
-            return ResponseEntity.status(HttpStatus.OK).body(instructorService.generateGetDTO(instructor));
+            return ResponseEntity.status(HttpStatus.OK).body(dtoService.instructor(instructor, true));
         }
         catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
@@ -102,7 +106,7 @@ public class InstructorController {
     public ResponseEntity<?> addNewCourse(@RequestBody @Validated CourseRequestPost data, @PathVariable String instructorId){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(courseService.generateGetDTO(courseRepository.getReferenceById(instructorService.createCourse(instructorId, data))));
+                .body(dtoService.course(courseRepository.getReferenceById(instructorService.createCourse(instructorId, data))));
     }
 
     @GetMapping("/{instructorId}/course")

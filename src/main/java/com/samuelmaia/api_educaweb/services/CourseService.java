@@ -16,14 +16,6 @@ public class CourseService {
     @Autowired
     CourseRepository courseRepository;
 
-    public CourseRequestGet generateGetDTO(Course course){
-        return new CourseRequestGet(course.getId(), course.getName(), course.getCategory(), course.getDescription(), course.getUrl(), this.generateInstructorDTO(course.getInstructor()));
-    }
-
-    public CourseRequestGet generateGetDTOWithInstructor(Course course){
-        return new CourseRequestGet(course.getId(), course.getName(), course.getCategory(), course.getDescription(), course.getUrl(), this.generateInstructorDTO(course.getInstructor()));
-    }
-
     public List<Course> findCourses(String category, String name){
         if (category != null && name != null) return courseRepository.findByCategoryAndName(category, name);
         else if (category != null) return courseRepository.findByCategory(category);
