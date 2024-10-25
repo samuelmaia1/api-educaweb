@@ -87,7 +87,7 @@ public class InstructorController {
         try{
             if (instructorService.login(loginData.login(), loginData.password())){
                 Instructor instructor = instructorRepository.findByLogin(loginData.login());
-                var token = tokenService.generateInstructorToken(instructorRepository.findByLogin(loginData.login()));
+                var token = tokenService.generateInstructorToken(instructor);
                 return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), instructor.getRole().toString(), instructor.getId()));
             }
 
@@ -100,27 +100,14 @@ public class InstructorController {
 
     @PostMapping("/{instructorId}/course")
     public ResponseEntity<?> addNewCourse(@RequestBody @Validated CourseRequestPost data, @PathVariable String instructorId){
-        try{
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(courseService.generateGetDTO(courseRepository.getReferenceById(instructorService.createCourse(instructorId, data))));
-        }
-        catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
-        catch (DataIntegrityViolationException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.value(), "Chave (name) já existe"));
-        }
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(courseService.generateGetDTO(courseRepository.getReferenceById(instructorService.createCourse(instructorId, data))));
     }
 
     @GetMapping("/{instructorId}/course")
     public ResponseEntity<?> getInstructorCourses(@PathVariable String instructorId){
-        try{
-            return ResponseEntity.status(HttpStatus.OK).body(instructorService.getCourses(instructorId));
-        }
-        catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(instructorService.getCourses(instructorId));
     }
 
     @DeleteMapping("/{instructorId}/course/{courseId}")

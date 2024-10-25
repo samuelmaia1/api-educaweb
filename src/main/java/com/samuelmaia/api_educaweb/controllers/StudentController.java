@@ -45,7 +45,7 @@ public class StudentController {
     public ResponseEntity<?> login(@RequestBody @Validated LoginDTO loginData){
         if (studentService.login(loginData.login(), loginData.password())){
             Student student = studentRepository.findByLogin(loginData.login());
-            var token = tokenService.generateStudentToken(studentRepository.findByLogin(loginData.login()));
+            var token = tokenService.generateStudentToken(student);
             return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), student.getRole().toString(), student.getId()));
         }
 

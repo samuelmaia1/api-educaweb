@@ -1,5 +1,6 @@
-package com.samuelmaia.api_educaweb.infra.exceptions;
+package com.samuelmaia.api_educaweb.infra;
 
+import com.samuelmaia.api_educaweb.exceptions.DataIsNotValidException;
 import com.samuelmaia.api_educaweb.exceptions.LoginAlreadyExistsException;
 import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;
 import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
@@ -20,5 +21,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(LoginAlreadyExistsException.class)
     private ResponseEntity<ErrorResponse> loginAlreaadyExistsHandler(LoginAlreadyExistsException exception){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.value(), exception.getMessage()));
+    }
+
+    @ExceptionHandler(DataIsNotValidException.class)
+    private ResponseEntity<ErrorResponse> dataIsNotValidHandler(DataIsNotValidException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
     }
 }
