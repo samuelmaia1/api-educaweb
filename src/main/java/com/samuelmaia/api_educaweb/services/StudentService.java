@@ -1,4 +1,4 @@
-package com.samuelmaia.api_educaweb.services.student;
+package com.samuelmaia.api_educaweb.services;
 
 import com.samuelmaia.api_educaweb.exceptions.LoginAlreadyExistsException;
 import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;
@@ -7,18 +7,12 @@ import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.repositories.*;
 import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
-import com.samuelmaia.api_educaweb.services.course.CourseService;
-import com.samuelmaia.api_educaweb.services.vacancy.VacancyService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -38,14 +32,16 @@ public class StudentService {
     private CompanyRepository companyRepository;
     @Autowired
     PasswordEncoder encoder;
+    @Autowired
+    DTOService dtoService;
 
     public List<CourseRequestGet> getFinishedCourses(String studentId){
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
-        return student.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList();
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado"));
+        return student.getCourses().stream().map(course -> dtoService.course(course)).toList();
     }
 
     public void addFinishedCourse(String studentId, String courseId){
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Curso não encontrado"));
         student.getCourses().add(course);
         studentRepository.save(student);
@@ -64,7 +60,7 @@ public class StudentService {
 
     public void addVacancy(String studentId, String vacancyId){
         try{
-            Student student = studentRepository.findById(studentId).orElseThrow(() -> new EntityNotFoundException("Estudante não encontrado"));
+            Student student = studentRepository.findById(studentId).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado"));
             Vacancy vacancy = vacancyRepository.findById(vacancyId).orElseThrow(() -> new EntityNotFoundException("Vaga não encontrada"));
             student.getVacancies().add(vacancy);
             studentRepository.save(student);
@@ -72,18 +68,6 @@ public class StudentService {
         catch(Exception e){
             System.out.println(e.getMessage());
         }
-    }
-
-    public StudentRequestGet generateStudentGetDTO(Student student){
-        StudentRequestGet studentDTO = new StudentRequestGet(student.getId(),
-                student.getFirstName(),
-                student.getLastName(),
-                student.getLogin(),
-                student.getEmail(),
-                student.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList(),
-                student.getVacancies()
-        );
-        return studentDTO;
     }
 
     public Student updateStudent(String id, StudentRequestPut data){
@@ -96,6 +80,8 @@ public class StudentService {
             student.setPassword(encoder.encode(data.password()));
         }
         if (data.login() != null) student.setLogin(data.login());
+
+        studentRepository.save(student);
 
         return student;
     }
@@ -124,7 +110,7 @@ public class StudentService {
 
     public StudentRequestGet getStudent(String id){
         Student student = studentRepository.findById(id).orElseThrow(() -> new UserNameNotFoundException("Estudante não encontrado."));
-        return this.generateStudentGetDTO(student);
+        return dtoService.student(student);
     }
 
     public Student register(StudentRequestPost data){

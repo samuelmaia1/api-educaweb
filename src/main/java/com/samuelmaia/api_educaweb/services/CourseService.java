@@ -1,9 +1,8 @@
-package com.samuelmaia.api_educaweb.services.course;
+package com.samuelmaia.api_educaweb.services;
 
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.instructor.Instructor;
-import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTO;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTOByCourse;
 import com.samuelmaia.api_educaweb.models.student.Student;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
@@ -16,14 +15,6 @@ import java.util.List;
 public class CourseService {
     @Autowired
     CourseRepository courseRepository;
-
-    public CourseRequestGet generateGetDTO(Course course){
-        return new CourseRequestGet(course.getId(), course.getName(), course.getCategory(), course.getDescription(), course.getUrl(), this.generateInstructorDTO(course.getInstructor()));
-    }
-
-    public CourseRequestGet generateGetDTOWithInstructor(Course course){
-        return new CourseRequestGet(course.getId(), course.getName(), course.getCategory(), course.getDescription(), course.getUrl(), this.generateInstructorDTO(course.getInstructor()));
-    }
 
     public List<Course> findCourses(String category, String name){
         if (category != null && name != null) return courseRepository.findByCategoryAndName(category, name);
