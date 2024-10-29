@@ -1,5 +1,7 @@
 package com.samuelmaia.api_educaweb.services;
 
+import com.samuelmaia.api_educaweb.models.company.Company;
+import com.samuelmaia.api_educaweb.models.company.CompanyGetDTO;
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.instructor.Instructor;
@@ -7,6 +9,8 @@ import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTO;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTOByCourse;
 import com.samuelmaia.api_educaweb.models.student.Student;
 import com.samuelmaia.api_educaweb.models.student.StudentRequestGet;
+import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
+import com.samuelmaia.api_educaweb.models.vacancy.VacancyRequestGet;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,8 +22,31 @@ public class DTOService {
                 student.getLogin(),
                 student.getEmail(),
                 student.getCourses().stream().map(course -> this.course(course)).toList(),
-                student.getVacancies()
+                student.getVacancies().stream().map(vacancy -> this.vacancy(vacancy, true)).toList()
         );
+    }
+
+    public CompanyGetDTO company(Company company, boolean withVacancies){
+        if (!withVacancies)
+            return new CompanyGetDTO(
+                    company.getId(),
+                    company.getName(),
+                    company.getEmail(),
+                    company.getState(),
+                    company.getCity(),
+                    company.getAddress()
+            );
+
+        else
+            return new CompanyGetDTO(
+                    company.getId(),
+                    company.getName(),
+                    company.getEmail(),
+                    company.getState(),
+                    company.getCity(),
+                    company.getAddress(),
+                    company.getVacancies()
+            );
     }
 
     public CourseRequestGet course(Course course){
@@ -44,6 +71,24 @@ public class DTOService {
                 instructor.getName(),
                 instructor.getEmail(),
                 instructor.getCourses().stream().map(course -> this.course(course)).toList()
+            );
+    }
+
+    public VacancyRequestGet vacancy(Vacancy vacancy, boolean withCompany){
+        if (!withCompany)
+            return new VacancyRequestGet(
+                    vacancy.getTitle(),
+                    vacancy.getArrangement(),
+                    vacancy.getDescription(),
+                    vacancy.getSalary()
+            );
+        else
+            return new VacancyRequestGet(
+                    vacancy.getTitle(),
+                    vacancy.getArrangement(),
+                    vacancy.getDescription(),
+                    vacancy.getSalary(),
+                    this.company(vacancy.getCompany(), false)
             );
     }
 }

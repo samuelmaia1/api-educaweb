@@ -13,4 +13,12 @@ public class VacancyRequestGet {
     private String arrangement;
     private String description;
     private Double salary;
+    private CompanyGetDTO company;
+
+    public VacancyRequestGet(String title, String arrangement, String description, Double salary) {
+        this.title = title;
+        this.arrangement = arrangement;
+        this.description = description;
+        this.salary = salary;
+    }
 }
