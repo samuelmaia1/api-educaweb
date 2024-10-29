@@ -28,4 +28,13 @@ public class CompanyGetDTO {
         this.address = address;
         this.vacancies = vacancies.stream().map(vacancy -> new VacancyRequestGet(vacancy.getTitle(), vacancy.getArrangement(), vacancy.getDescription(), vacancy.getSalary())).toList();
     }
+
+    public CompanyGetDTO(String id, String name, String email, String state, String city, String address){
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.state = state;
+        this.city = city;
+        this.address = address;
+    }
 }

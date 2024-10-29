@@ -1,5 +1,7 @@
-package com.samuelmaia.api_educaweb.services.instructor;
+package com.samuelmaia.api_educaweb.services;
 
+import com.samuelmaia.api_educaweb.exceptions.DataIsNotValidException;
+import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
@@ -7,12 +9,10 @@ import com.samuelmaia.api_educaweb.models.instructor.Instructor;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTO;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorPostDTO;
 import com.samuelmaia.api_educaweb.models.response.DeleteResponse;
-import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.repositories.CompanyRepository;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
 import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
 import com.samuelmaia.api_educaweb.repositories.StudentRepository;
-import com.samuelmaia.api_educaweb.services.course.CourseService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,6 +27,9 @@ import java.util.List;
 public class InstructorService {
     @Autowired
     InstructorRepository instructorRepository;
+
+    @Autowired
+    DTOService dtoService;
 
     @Autowired
     StudentRepository studentRepository;
@@ -44,7 +47,8 @@ public class InstructorService {
     PasswordEncoder encoder;
 
     public String createCourse(String instructorId, CourseRequestPost data){
-        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado"));
+        if (!courseRepository.findByName(data.name()).isEmpty()) throw new DataIsNotValidException("Chave (nome) já existente");
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new UserNameNotFoundException("Instrutor não encontrado"));
         Course course = new Course(data, instructor);
         instructor.getCourses().add(course);
         courseRepository.save(course);
@@ -52,18 +56,10 @@ public class InstructorService {
         return course.getId();
     }
 
-    public InstructorGetDTO generateGetDTO(Instructor instructor){
-        return new InstructorGetDTO(
-                instructor.getId(),
-                instructor.getName(),
-                instructor.getEmail(),
-                instructor.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList()
-        );
-    }
 
     public List<CourseRequestGet> getCourses(String instructorId){
-        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado"));
-        return instructor.getCourses().stream().map(course -> courseService.generateGetDTO(course)).toList();
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new UserNameNotFoundException("Instrutor não encontrado"));
+        return instructor.getCourses().stream().map(course -> dtoService.course(course)).toList();
     }
 
     public Instructor register(InstructorPostDTO data){
@@ -84,7 +80,7 @@ public class InstructorService {
     public Boolean login(String login, String password){
         Instructor instructor = instructorRepository.findByLogin(login);
 
-        if (instructor == null) throw new EntityNotFoundException("Instrutor com este login não existe");
+        if (instructor == null) throw new UserNameNotFoundException();
 
         if (encoder.matches(password, instructor.getPassword())){
             return true;
@@ -96,9 +92,7 @@ public class InstructorService {
         try{
             Course courseToBeDeleted = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Id de curso não encontrado."));
             Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Id de instrutor não encontrado"));
-            System.out.println(instructor.getCourses());
             instructor.getCourses().remove(courseToBeDeleted);
-            System.out.println(instructor.getCourses());
             instructorRepository.save(instructor);
 
             return ResponseEntity.ok(new DeleteResponse(true, "Curso deletado com sucesso!"));

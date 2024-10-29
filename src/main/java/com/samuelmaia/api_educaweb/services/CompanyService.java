@@ -1,4 +1,4 @@
-package com.samuelmaia.api_educaweb.services.company;
+package com.samuelmaia.api_educaweb.services;
 
 import com.samuelmaia.api_educaweb.models.company.Company;
 import com.samuelmaia.api_educaweb.models.company.CompanyGetDTO;
@@ -10,7 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 public class CompanyService {

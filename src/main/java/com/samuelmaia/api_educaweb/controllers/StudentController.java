@@ -1,6 +1,5 @@
 package com.samuelmaia.api_educaweb.controllers;
 
-import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
 import com.samuelmaia.api_educaweb.models.response.AuthorizationResponse;
 import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
@@ -8,18 +7,14 @@ import com.samuelmaia.api_educaweb.models.response.LoginResponse;
 import com.samuelmaia.api_educaweb.models.student.*;
 import com.samuelmaia.api_educaweb.models.vacancy.Vacancy;
 import com.samuelmaia.api_educaweb.repositories.StudentRepository;
+import com.samuelmaia.api_educaweb.services.DTOService;
 import com.samuelmaia.api_educaweb.services.TokenService;
-import com.samuelmaia.api_educaweb.services.student.StudentService;
-import io.swagger.v3.oas.annotations.Operation;
+import com.samuelmaia.api_educaweb.services.StudentService;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +27,9 @@ import java.util.List;
 public class StudentController {
     @Autowired
     StudentService studentService;
+
+    @Autowired
+    DTOService dtoService;
 
     @Autowired
     StudentRepository studentRepository;
@@ -51,7 +49,7 @@ public class StudentController {
     public ResponseEntity<?> login(@RequestBody @Validated LoginDTO loginData){
         if (studentService.login(loginData.login(), loginData.password())){
             Student student = studentRepository.findByLogin(loginData.login());
-            var token = tokenService.generateStudentToken(studentRepository.findByLogin(loginData.login()));
+            var token = tokenService.generateStudentToken(student);
             return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), student.getRole().toString(), student.getId()));
         }
 
@@ -77,19 +75,14 @@ public class StudentController {
 
     @GetMapping("/{studentId}/courses")
     public ResponseEntity<?> getAllFinishedCourses(@PathVariable String studentId){
-        try{
-            List<CourseRequestGet> courseList = studentService.getFinishedCourses(studentId);
-            return ResponseEntity.status(HttpStatus.OK).body(courseList);
-        } catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.getFinishedCourses(studentId));
     }
     
     @PostMapping("/{studentId}/courses/{courseId}")
     public ResponseEntity<?> addFinishedCourse(@PathVariable String studentId, @PathVariable String courseId){
         try{
             studentService.addFinishedCourse(studentId, courseId);
-            return ResponseEntity.ok(studentService.generateStudentGetDTO(studentRepository.getReferenceById(studentId)));
+            return ResponseEntity.ok(dtoService.student(studentRepository.getReferenceById(studentId)));
         } catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
         }
@@ -109,17 +102,7 @@ public class StudentController {
 
     @PutMapping("/update/{studentId}")
     public ResponseEntity<?> updateStudent(@Parameter(description = "id do usuário a ser atualizado") @PathVariable String studentId, @RequestBody @Validated StudentRequestPut data){
-        try{
-            Student updatedStudent = studentService.updateStudent(studentId, data);
-            studentRepository.save(updatedStudent);
-            return ResponseEntity.ok(updatedStudent);
-        }
-        catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno"  ));
-        }
+        return ResponseEntity.ok(studentService.updateStudent(studentId, data));
     }
 
 }

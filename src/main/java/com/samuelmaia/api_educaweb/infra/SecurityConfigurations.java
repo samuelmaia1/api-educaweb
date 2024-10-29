@@ -1,7 +1,6 @@
-package com.samuelmaia.api_educaweb.infra.security;
+package com.samuelmaia.api_educaweb.infra;
 
 import com.samuelmaia.api_educaweb.components.SecurityFilter;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
