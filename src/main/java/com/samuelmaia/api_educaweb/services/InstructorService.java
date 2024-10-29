@@ -1,6 +1,7 @@
 package com.samuelmaia.api_educaweb.services;
 
 import com.samuelmaia.api_educaweb.exceptions.DataIsNotValidException;
+import com.samuelmaia.api_educaweb.exceptions.InvalidPasswordException;
 import com.samuelmaia.api_educaweb.exceptions.LoginAlreadyExistsException;
 import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;
 import com.samuelmaia.api_educaweb.models.course.Course;
@@ -94,7 +95,7 @@ public class InstructorService {
         if (encoder.matches(password, instructor.getPassword())){
             return true;
         }
-        return false;
+        throw new InvalidPasswordException("Senha inválida");
     }
 
     public ResponseEntity<DeleteResponse> deleteCourse(String courseId, String instructorId){
