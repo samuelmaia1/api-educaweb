@@ -49,41 +49,17 @@ public class InstructorController {
 
     @GetMapping
     public ResponseEntity<List<InstructorGetDTO>> getAllInstructors(){
-        try{
-            List<Instructor> allInstructors = instructorRepository.findAll();
-            List<InstructorGetDTO> allInstructorsDTO = allInstructors.stream()
-                    .map(
-                        instructor -> dtoService.instructor(instructor, true))
-                    .toList();
-            return ResponseEntity.ok(allInstructorsDTO);
-        }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        return ResponseEntity.ok(instructorService.getAllInstructors());
     }
 
     @GetMapping("/{instructorId}")
-    public ResponseEntity<?> getInstructorById(@PathVariable String instructorId){
-        try{
-            Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado"));
-            return ResponseEntity.status(HttpStatus.OK).body(dtoService.instructor(instructor, true));
-        }
-        catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
+    public ResponseEntity<InstructorGetDTO> getInstructorById(@PathVariable String instructorId){
+        return ResponseEntity.ok(instructorService.getInstructorById(instructorId));
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerNewInstructor(@RequestBody @Validated InstructorPostDTO data){
-        try{
-            return ResponseEntity.status(HttpStatus.CREATED).body(instructorService.register(data));
-        }
-        catch (DataIntegrityViolationException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
-        }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro ao criar conta, por favor tente mais tarde."));
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(instructorService.register(data));
     }
 
     @PostMapping("/login")

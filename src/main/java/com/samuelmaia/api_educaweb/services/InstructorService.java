@@ -1,6 +1,7 @@
 package com.samuelmaia.api_educaweb.services;
 
 import com.samuelmaia.api_educaweb.exceptions.DataIsNotValidException;
+import com.samuelmaia.api_educaweb.exceptions.LoginAlreadyExistsException;
 import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
@@ -46,6 +47,14 @@ public class InstructorService {
     @Autowired
     PasswordEncoder encoder;
 
+    public List<InstructorGetDTO> getAllInstructors(){
+        return instructorRepository.findAll().stream().map(instructor -> dtoService.instructor(instructor, true)).toList();
+    }
+
+    public InstructorGetDTO getInstructorById(String id){
+        return dtoService.instructor(instructorRepository.findById(id).orElseThrow(() -> new UserNameNotFoundException("Professor não encontrado")), true);
+    }
+
     public String createCourse(String instructorId, CourseRequestPost data){
         if (!courseRepository.findByName(data.name()).isEmpty()) throw new DataIsNotValidException("Chave (nome) já existente");
         Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new UserNameNotFoundException("Instrutor não encontrado"));
@@ -64,10 +73,10 @@ public class InstructorService {
 
     public Instructor register(InstructorPostDTO data){
         if (instructorRepository.existsByLogin(data.login()) ||studentRepository.existsByLogin(data.login()) || companyRepository.existsByLogin(data.login())){
-            throw new DataIntegrityViolationException("Nome de usuário já cadastrado.");
+            throw new LoginAlreadyExistsException("Nome de usuário já cadastrado.");
         }
         if (instructorRepository.existsByEmail(data.email()) || studentRepository.existsByEmail(data.email()) || companyRepository.existsByEmail(data.email())){
-            throw new DataIntegrityViolationException("Email já cadastrado.");
+            throw new LoginAlreadyExistsException("Email já cadastrado.");
         }
 
         Instructor instructor = new Instructor(data);
