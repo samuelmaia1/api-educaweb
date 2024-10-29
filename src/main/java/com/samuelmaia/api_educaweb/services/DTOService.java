@@ -27,26 +27,23 @@ public class DTOService {
     }
 
     public CompanyGetDTO company(Company company, boolean withVacancies){
-        if (!withVacancies)
-            return new CompanyGetDTO(
-                    company.getId(),
-                    company.getName(),
-                    company.getEmail(),
-                    company.getState(),
-                    company.getCity(),
-                    company.getAddress()
-            );
-
-        else
-            return new CompanyGetDTO(
-                    company.getId(),
-                    company.getName(),
-                    company.getEmail(),
-                    company.getState(),
-                    company.getCity(),
-                    company.getAddress(),
-                    company.getVacancies()
-            );
+        return !withVacancies ? new CompanyGetDTO(
+                company.getId(),
+                company.getName(),
+                company.getEmail(),
+                company.getState(),
+                company.getCity(),
+                company.getAddress()
+        ) :
+        new CompanyGetDTO(
+                company.getId(),
+                company.getName(),
+                company.getEmail(),
+                company.getState(),
+                company.getCity(),
+                company.getAddress(),
+                company.getVacancies()
+        );
     }
 
     public CourseRequestGet course(Course course){
@@ -59,36 +56,32 @@ public class DTOService {
     }
 
     public InstructorGetDTO instructor(Instructor instructor, boolean withCourse){
-        if (!withCourse)
-            return new InstructorGetDTO(
-                    instructor.getId(),
-                    instructor.getName(),
-                    instructor.getEmail()
-            );
-        else
-            return new InstructorGetDTO(
+        return !withCourse ? new InstructorGetDTO(
+                instructor.getId(),
+                instructor.getName(),
+                instructor.getEmail()
+        ) :
+         new InstructorGetDTO(
                 instructor.getId(),
                 instructor.getName(),
                 instructor.getEmail(),
                 instructor.getCourses().stream().map(course -> this.course(course)).toList()
-            );
+        );
     }
 
     public VacancyRequestGet vacancy(Vacancy vacancy, boolean withCompany){
-        if (!withCompany)
-            return new VacancyRequestGet(
-                    vacancy.getTitle(),
-                    vacancy.getArrangement(),
-                    vacancy.getDescription(),
-                    vacancy.getSalary()
-            );
-        else
-            return new VacancyRequestGet(
-                    vacancy.getTitle(),
-                    vacancy.getArrangement(),
-                    vacancy.getDescription(),
-                    vacancy.getSalary(),
-                    this.company(vacancy.getCompany(), false)
-            );
+        return !withCompany ? new VacancyRequestGet(
+                vacancy.getTitle(),
+                vacancy.getArrangement(),
+                vacancy.getDescription(),
+                vacancy.getSalary()
+        ) :
+        new VacancyRequestGet(
+                vacancy.getTitle(),
+                vacancy.getArrangement(),
+                vacancy.getDescription(),
+                vacancy.getSalary(),
+                this.company(vacancy.getCompany(), false)
+        );
     }
 }
