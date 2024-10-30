@@ -1,9 +1,6 @@
 package com.samuelmaia.api_educaweb.infra;
 
-import com.samuelmaia.api_educaweb.exceptions.DataIsNotValidException;
-import com.samuelmaia.api_educaweb.exceptions.InvalidPasswordException;
-import com.samuelmaia.api_educaweb.exceptions.LoginAlreadyExistsException;
-import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;
+import com.samuelmaia.api_educaweb.exceptions.*;
 import com.samuelmaia.api_educaweb.models.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
