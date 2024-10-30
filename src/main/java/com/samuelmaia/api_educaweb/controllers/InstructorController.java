@@ -64,18 +64,12 @@ public class InstructorController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginDTO loginData){
-        try{
             if (instructorService.login(loginData.login(), loginData.password())){
                 Instructor instructor = instructorRepository.findByLogin(loginData.login());
                 var token = tokenService.generateInstructorToken(instructor);
                 return ResponseEntity.ok(new AuthorizationResponse(token, loginData.login(), instructor.getRole().toString(), instructor.getId()));
             }
-
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(false, "Senha inválida.", ""));
-        }
-        catch (UsernameNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
     }
 
     @PostMapping("/{instructorId}/course")

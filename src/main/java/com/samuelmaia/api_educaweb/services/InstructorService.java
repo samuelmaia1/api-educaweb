@@ -90,7 +90,7 @@ public class InstructorService {
     public Boolean login(String login, String password){
         Instructor instructor = instructorRepository.findByLogin(login);
 
-        if (instructor == null) throw new UserNameNotFoundException();
+        if (instructor == null) throw new UserNameNotFoundException("Usuário não encontrado");
 
         if (encoder.matches(password, instructor.getPassword())){
             return true;
