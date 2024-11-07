@@ -36,33 +36,20 @@ public class CourseController {
 
     @PostMapping("/register/{instructorId}")
     public ResponseEntity<?> registerNewCourse(@RequestBody @Validated CourseRequestPost data, @PathVariable String instructorId){
-        try{
-            Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new EntityNotFoundException("Instrutor não encontrado."));
-            Course course = new Course(data, instructor);
-            courseRepository.save(course);
-            return ResponseEntity.status(HttpStatus.CREATED).body(dtoService.course(course));
-        }
-        catch (EntityNotFoundException e){
-            System.out.print(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtoService.course(courseService.registerNewCourse(data, instructorId)));
     }
 
     @GetMapping
     public ResponseEntity<List<CourseRequestGet>> getAllCourses(@RequestParam(required = false) String category, @RequestParam(required = false) String name){
-        List<Course> courses = courseService.findCourses(category, name);
-        return ResponseEntity.status(HttpStatus.OK).body(courses.stream().map(course -> dtoService.course(course)).toList());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(courseService.findCourses(category, name).stream().map(course -> dtoService.course(course)).toList());
     }
-
 
     @GetMapping("/{courseId}")
     public ResponseEntity<?> getCourseById(@PathVariable String  courseId){
-        try{
-            Course course = courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Curso não existente com este id"));
-            return ResponseEntity.status(HttpStatus.OK).body(dtoService.course(course));
-        }
-        catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
-        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(dtoService.course(courseRepository.findById(courseId).orElseThrow(() -> new EntityNotFoundException("Curso não existente com este id"))));
     }
 }

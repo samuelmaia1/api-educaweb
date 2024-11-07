@@ -1,11 +1,14 @@
 package com.samuelmaia.api_educaweb.services;
 
+import com.samuelmaia.api_educaweb.exceptions.UserNameNotFoundException;
 import com.samuelmaia.api_educaweb.models.course.Course;
 import com.samuelmaia.api_educaweb.models.course.CourseRequestGet;
+import com.samuelmaia.api_educaweb.models.course.CourseRequestPost;
 import com.samuelmaia.api_educaweb.models.instructor.Instructor;
 import com.samuelmaia.api_educaweb.models.instructor.InstructorGetDTOByCourse;
 import com.samuelmaia.api_educaweb.models.student.Student;
 import com.samuelmaia.api_educaweb.repositories.CourseRepository;
+import com.samuelmaia.api_educaweb.repositories.InstructorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,9 @@ import java.util.List;
 public class CourseService {
     @Autowired
     CourseRepository courseRepository;
+
+    @Autowired
+    InstructorRepository instructorRepository;
 
     public List<Course> findCourses(String category, String name){
         if (category != null && name != null) return courseRepository.findByCategoryAndName(category, name);
@@ -28,11 +34,10 @@ public class CourseService {
         courseRepository.save(course);
     }
 
-    public InstructorGetDTOByCourse generateInstructorDTO(Instructor instructor){
-        return new InstructorGetDTOByCourse(
-                instructor.getId(),
-                instructor.getName(),
-                instructor.getEmail()
-        );
+    public Course registerNewCourse(CourseRequestPost data, String instructorId){
+        Instructor instructor = instructorRepository.findById(instructorId).orElseThrow(() -> new UserNameNotFoundException("Instrutor não encontrado"));
+        Course course = new Course(data, instructor);
+        courseRepository.save(course);
+        return course;
     }
 }
